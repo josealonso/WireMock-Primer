@@ -1,13 +1,14 @@
 package info.josealonso.wiremock.moviesapp.service;
 
 import info.josealonso.wiremock.moviesapp.dto.Movie;
+import info.josealonso.wiremock.moviesapp.exception.MovieErrorResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class MoviesRestClientTest {
 
@@ -30,5 +31,30 @@ class MoviesRestClientTest {
         // then
         assertTrue(moviesList.size() > 0);
     }
+
+    @Test
+    void retrieveMovieById() {
+        Integer movieId = 1;
+        Movie movie = moviesRestClient.retrieveMovieById(movieId);
+        assertEquals("Batman Begins", movie.getName());
+    }
+
+    @Test
+    void retrieveMovieById_notFound() {
+        Integer movieId = 100;
+        Movie movie = moviesRestClient.retrieveMovieById(movieId);
+        assertThrows(MovieErrorResponse.class, () -> moviesRestClient.retrieveMovieById(movieId));
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
 
