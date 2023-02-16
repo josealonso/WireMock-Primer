@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -39,4 +40,27 @@ public class MoviesRestClient {
             throw new MovieErrorResponse(ex);
         }
     }
+
+    public List<Movie> retrieveMovieByName(String movieName) {
+        String retrieveByNameUri = UriComponentsBuilder.fromUriString(MoviesAppConstants.MOVIE_BY_NAME_QUERY_PARAM)
+                .queryParam("movie_name", movieName)
+                .buildAndExpand()
+                .toUriString();
+
+        try {
+            return webClient.get().uri(retrieveByNameUri)
+                    .retrieve()
+                    .bodyToFlux(Movie.class)
+                    .collectList()
+                    .block();
+        } catch (WebClientResponseException ex) {
+            log.error("WebClientResponseException in retrieveMovieById. Status code is {} " +
+                    "and the message is {} ", ex.getStatusCode(), ex.getResponseBodyAsString());
+            throw new MovieErrorResponse(ex.getStatusText(), ex);
+        } catch (Exception ex) {
+            log.error("Exception in retrieveMovieByName and the message is {}", ex.getMessage());
+            throw new MovieErrorResponse(ex);
+        }
+    }
+
 }

@@ -46,6 +46,20 @@ class MoviesRestClientTest {
         assertThrows(MovieErrorResponse.class, () -> moviesRestClient.retrieveMovieById(movieId));
     }
 
+    @Test
+    void retrieveMovieByName() {
+        String movieName = "Avengers";
+        List<Movie> movieList = moviesRestClient.retrieveMovieByName(movieName);
+        String castExpected = "Robert Downey Jr, Chris Evans , Chris HemsWorth";
+        assertEquals(castExpected, movieList.get(0).getCast());
+    }
+
+    @Test
+    void retrieveMovieByName_notFound() {
+        String movieName = "ABC";
+        assertThrows(MovieErrorResponse.class, () -> moviesRestClient.retrieveMovieByName(movieName));
+    }
+
 }
 
 
